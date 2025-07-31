@@ -5,6 +5,9 @@ on:
     branches:
       - master  # 或其他你需要触发部署的分支
 
+  repository_dispatch:
+    types: [deploy]  # 这里是与 triggerGitHubBuild 中的 event_type 相匹配
+
 jobs:
   build:
     runs-on: ubuntu-latest
