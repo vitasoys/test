@@ -23,14 +23,11 @@ const formatDate = (dateString: string) => {
 const fetchNewsDetail = async () => {
   try {
     
-    const api_url: string = "http://192.168.1.207:8000/api/news";
+    const api_url: string = "https://guanwang.test.modiarts.com/api/rankQuery.php";
     try {
-      const { data } = await useFetch(api_url, {
-        query: {
-          id: newsId
-        }
-      });
-      newsDetail.value = data.value?.data.com_txt
+      const { data } = await useFetch(api_url);
+      const newData = data.value.find(list => list.com_docid === newsId);
+      newsDetail.value = newData.com_txt
     } catch (error) {
       console.warn(error);
     }
@@ -56,6 +53,7 @@ watch(() => route.params.id, (newId) => {
   min-height: 100vh;
   background-image: linear-gradient(0deg, #0e0e0e, #292875);
   padding: 80px 0 40px;
+  color: #fff;
 }
 
 .news-detail-container {

@@ -27,11 +27,10 @@ import dayjs from "dayjs";
 
 // 资讯列表
 let newsList = [];
-const api_url: string = "http://192.168.1.207:8000/api/lists";
+const api_url: string = "https://guanwang.test.modiarts.com/api/rankQuery.php";
 try {
   const { data } = await useFetch(api_url);
-  console.log(data)
-  newsList = data.value?.data.default || [];
+  newsList = data.value;
 } catch (error) {
   console.warn(error);
 }
