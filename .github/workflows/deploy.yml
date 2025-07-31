@@ -32,8 +32,8 @@ jobs:
       - name: Deploy to FTP server
         uses: SamKirkland/FTP-Deploy-Action@v4.0.0
         with:
-          ftp-server: ${{ ftp://119.23.224.89/ }}
-          ftp-username: ${{ guanwang }}
-          ftp-password: ${{ jfeNBHmjhfedfftJ }}
+          ftp-server: ${{ secrets.FTP_SERVER }}
+          ftp-username: ${{ secrets.FTP_USERNAME }}
+          ftp-password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./dist  # 你要上传的构建目录
           remote-dir: /zjztest  # 服务器上的路径
