@@ -36,4 +36,4 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./dist/  # 你要上传的构建目录
-          server-dir: /zjztest  # 服务器上的路径
+          server-dir: /zjztest/  # 服务器上的路径
