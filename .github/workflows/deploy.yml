@@ -1,0 +1,39 @@
+name: Deploy Nuxt.js app
+
+on:
+  push:
+    branches:
+      - master  # 或其他你需要触发部署的分支
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 检出代码
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # 设置 Node.js 环境
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '22'  # 根据你的项目需求选择版本
+
+      # 安装依赖
+      - name: Install dependencies
+        run: npm install
+
+      # 构建项目
+      - name: Build Nuxt app
+        run: npm run generate:dist
+
+      # 使用FTP部署
+      - name: Deploy to FTP server
+        uses: SamKirkland/FTP-Deploy-Action@v4
+        with:
+          ftp-server: ${{ secrets.FTP_SERVER }}
+          ftp-username: ${{ secrets.FTP_USERNAME }}
+          ftp-password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist  # 你要上传的构建目录
+          remote-dir: /zjztest  # 服务器上的路径
