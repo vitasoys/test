@@ -31,12 +31,14 @@ jobs:
       - name: Build Nuxt app
         run: npm run generate:dist
 
-      # 使用FTP部署
-      - name: Deploy to FTP server
-        uses: SamKirkland/FTP-Deploy-Action@v4.0.0
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./dist/  # 你要上传的构建目录
-          server-dir: /zjztest/  # 服务器上的路径
+      # 使用OSS部署
+      - name: Install OSS CLI
+        run: |
+          curl -o ossutil.tar.gz https://gosspublic.alicdn.com/ossutil/1.7.4/ossutil64
+          tar -zxvf ossutil.tar.gz
+          chmod +x ossutil
+
+      - name: Deploy to OSS
+        run: |
+          ./ossutil config -e oss-cn-hangzhou.aliyuncs.com -i ${{ secrets.OSS_ACCESS_KEY_ID }} -k ${{ secrets.OSS_ACCESS_KEY_SECRET }}
+          ./ossutil cp -r ./dist/ oss://guanwang2508/zjztest/ --exclude ".git/*"
