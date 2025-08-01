@@ -13,7 +13,7 @@ export default defineNuxtConfig({
     },
   },
   app: {
-    baseURL: process.env.BASE_URL || '/zjztest/',
+    baseURL: process.env.NUXT_ENVIRONMENT === 'development' ? '/zjztest-uat/' : '/zjztest/',
   },
   // 启用 ISR (Incremental Static Regeneration)
   nitro: {
