@@ -18,9 +18,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # 缓存 node_modules 目录
+      # 缓存 node_modules 目录，使用 actions/cache@v3
       - name: Cache node_modules
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json', '**/package.json') }}
