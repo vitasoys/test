@@ -37,10 +37,10 @@ jobs:
           curl -o ossutil https://gosspublic.alicdn.com/ossutil/1.7.3/ossutil64
           chmod +x ossutil
 
-      - name: List dist directory contents (debugging step)
+      - name: List dist directory contents
         run: ls -R ./dist
 
       - name: Deploy to OSS
         run: |
           ./ossutil config -e oss-cn-shenzhen.aliyuncs.com -i ${{ secrets.OSS_ACCESS_KEY_ID }} -k ${{ secrets.OSS_ACCESS_KEY_SECRET }}
-          find ./dist -type f ! -path "*/.git/*" -exec ./ossutil cp {} oss://guanwang2508/zjztest/ \;
+          ./ossutil cp -r ./dist/ oss://guanwang2508/zjztest/ --exclude "*.git/*"
