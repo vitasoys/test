@@ -18,6 +18,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      # 检查 package.json 是否有更新
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v34
+        with:
+          files: |
+            package.json
+            package-lock.json
+
       # 缓存 node_modules 目录，使用 actions/cache@v3
       - name: Cache node_modules
         uses: actions/cache@v3
@@ -33,15 +42,12 @@ jobs:
         with:
           node-version: '22'  # 根据你的项目需求选择版本
 
-      # 如果缓存未命中，则安装依赖
+      # 如果缓存未命中或package.json有更新，则安装依赖
       - name: Install dependencies
+        if: steps.changed-files.outputs.any_changed == 'true' || steps.cache-node-modules.outputs.cache-hit != 'true'
         run: |
-          if [ ! -d "node_modules" ]; then
-            echo "Installing dependencies"
-            npm install
-          else
-            echo "Dependencies already installed, skipping npm install"
-          fi
+          echo "Installing dependencies"
+          npm install
 
       # 根据分支选择构建命令
       - name: Build Nuxt app
