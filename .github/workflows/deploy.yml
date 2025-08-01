@@ -71,9 +71,9 @@ jobs:
       - name: Deploy to OSS
         run: |
           if [[ $GITHUB_REF == 'refs/heads/dev' ]]; then
-            ./ossutil config -e oss-cn-hangzhou.aliyuncs.com -i ${{ secrets.OSS_ACCESS_KEY_ID }} -k ${{ secrets.OSS_ACCESS_KEY_SECRET }}
+            ./ossutil config -e oss-cn-shenzhen.aliyuncs.com -i ${{ secrets.OSS_ACCESS_KEY_ID }} -k ${{ secrets.OSS_ACCESS_KEY_SECRET }}
             ./ossutil cp -r ./dist/ oss://guanwang2508/zjztest-uat/ --exclude "*.git*" -f  # dev 分支上传到 zjztest-uat
           elif [[ $GITHUB_REF == 'refs/heads/master' ]]; then
-            ./ossutil config -e oss-cn-hangzhou.aliyuncs.com -i ${{ secrets.OSS_ACCESS_KEY_ID }} -k ${{ secrets.OSS_ACCESS_KEY_SECRET }}
+            ./ossutil config -e oss-cn-shenzhen.aliyuncs.com -i ${{ secrets.OSS_ACCESS_KEY_ID }} -k ${{ secrets.OSS_ACCESS_KEY_SECRET }}
             ./ossutil cp -r ./release/ oss://guanwang2508/zjztest/ --exclude "*.git*" -f  # master 分支上传到 zjztest
           fi
