@@ -3,7 +3,8 @@ name: Deploy Nuxt.js app
 on:
   push:
     branches:
-      - master  # 或其他你需要触发部署的分支
+      - dev   # dev 分支触发自动构建
+      - master  # master 分支触发自动构建
 
   repository_dispatch:
     types: [deploy]  # 这里是与 triggerGitHubBuild 中的 event_type 相匹配
@@ -17,30 +18,62 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      # 缓存 node_modules 目录
+      - name: Cache node_modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json', '**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
       # 设置 Node.js 环境
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
           node-version: '22'  # 根据你的项目需求选择版本
 
-      # 安装依赖
+      # 如果缓存未命中，则安装依赖
       - name: Install dependencies
-        run: npm install
+        run: |
+          if [ ! -d "node_modules" ]; then
+            echo "Installing dependencies"
+            npm install
+          else
+            echo "Dependencies already installed, skipping npm install"
+          fi
 
-      # 构建项目
+      # 根据分支选择构建命令
       - name: Build Nuxt app
-        run: npm run generate:dist
+        run: |
+          if [[ $GITHUB_REF == 'refs/heads/dev' ]]; then
+            npm run generate:dist   # dev 分支使用 generate:dist
+          elif [[ $GITHUB_REF == 'refs/heads/master' ]]; then
+            npm run generate:release  # master 分支使用 generate:release
+          fi
 
-      # 使用OSS部署
+      # 安装 OSS CLI
       - name: Install OSS CLI
         run: |
           curl -o ossutil https://gosspublic.alicdn.com/ossutil/1.7.3/ossutil64
           chmod +x ossutil
 
-      - name: List dist directory contents
-        run: ls -R ./dist
+      # 打印构建产物目录内容（便于调试）
+      - name: List output directory contents
+        run: |
+          if [[ $GITHUB_REF == 'refs/heads/dev' ]]; then
+            ls -R ./dist   # dev 分支使用 dist 目录
+          elif [[ $GITHUB_REF == 'refs/heads/master' ]]; then
+            ls -R ./release  # master 分支使用 release 目录
+          fi
 
+      # 根据分支选择 OSS 上传路径
       - name: Deploy to OSS
         run: |
-          ./ossutil config -e oss-cn-shenzhen.aliyuncs.com -i ${{ secrets.OSS_ACCESS_KEY_ID }} -k ${{ secrets.OSS_ACCESS_KEY_SECRET }}
-          ./ossutil cp -r ./dist/ oss://guanwang2508/zjztest/ --exclude "*.git*" -f;
+          if [[ $GITHUB_REF == 'refs/heads/dev' ]]; then
+            ./ossutil config -e oss-cn-hangzhou.aliyuncs.com -i ${{ secrets.OSS_ACCESS_KEY_ID }} -k ${{ secrets.OSS_ACCESS_KEY_SECRET }}
+            ./ossutil cp -r ./dist/ oss://guanwang2508/zjztest-uat/ --exclude "*.git*" -f  # dev 分支上传到 zjztest-uat
+          elif [[ $GITHUB_REF == 'refs/heads/master' ]]; then
+            ./ossutil config -e oss-cn-hangzhou.aliyuncs.com -i ${{ secrets.OSS_ACCESS_KEY_ID }} -k ${{ secrets.OSS_ACCESS_KEY_SECRET }}
+            ./ossutil cp -r ./release/ oss://guanwang2508/zjztest/ --exclude "*.git*" -f  # master 分支上传到 zjztest
+          fi
