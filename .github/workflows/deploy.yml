@@ -43,4 +43,4 @@ jobs:
       - name: Deploy to OSS
         run: |
           ./ossutil config -e oss-cn-shenzhen.aliyuncs.com -i ${{ secrets.OSS_ACCESS_KEY_ID }} -k ${{ secrets.OSS_ACCESS_KEY_SECRET }}
-          ./ossutil cp -r ./dist/ oss://guanwang2508/zjztest/ --exclude "*.git/*" -f;
+          ./ossutil cp -r ./dist/ oss://guanwang2508/zjztest/ --exclude "*.git*" -f;
