@@ -42,5 +42,5 @@ jobs:
 
       - name: Deploy to OSS
         run: |
-          ./ossutil config -e oss-cn-hangzhou.aliyuncs.com -i ${{ secrets.OSS_ACCESS_KEY_ID }} -k ${{ secrets.OSS_ACCESS_KEY_SECRET }}
+          ./ossutil config -e oss-cn-shenzhen.aliyuncs.com -i ${{ secrets.OSS_ACCESS_KEY_ID }} -k ${{ secrets.OSS_ACCESS_KEY_SECRET }}
           find ./dist -type f ! -path "*/.git/*" -exec ./ossutil cp {} oss://guanwang2508/zjztest/ \;
